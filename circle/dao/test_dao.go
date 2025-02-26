@@ -108,27 +108,27 @@ func (ud *TestDao) UpdateTest(test *models.Test) error {
 func (ud *TestDao) RecommentTest(circle string) ([]models.Test){
     var test []models.Test
 	if circle=="" {
-		_= database.DB.Order("RAND()").Limit(10).Find(&test).Error
+		_= database.DB.Order("RAND()").Limit(6).Find(&test).Error
 	}else{
-	    _= database.DB.Where("circle = ?", circle).Order("RAND()").Limit(10).Find(&test).Error
+	    _= database.DB.Where("circle = ?", circle).Order("RAND()").Limit(6).Find(&test).Error
 	}
 	return test
 }
 func (ud *TestDao) HotTest(circle string) ([]models.Test){
 	var test []models.Test
 	if circle=="" {
-		_= database.DB.Order("good desc").Limit(10).Find(&test).Error
+		_= database.DB.Order("good desc").Limit(6).Find(&test).Error
 	}else{
-		_= database.DB.Where("circle = ?", circle).Order("good desc").Limit(10).Find(&test).Error
+		_= database.DB.Where("circle = ?", circle).Order("good desc").Limit(6).Find(&test).Error
 	}
 	return test
 }
 func (ud *TestDao) NewTest(circle string) ([]models.Test){
 	var test []models.Test
 	if circle=="" {
-		_= database.DB.Order("createtime desc").Limit(10).Find(&test).Error
+		_= database.DB.Order("createtime desc").Limit(6).Find(&test).Error
 	}else{
-		_= database.DB.Where("circle = ?", circle).Order("createtime desc").Limit(10).Find(&test).Error
+		_= database.DB.Where("circle = ?", circle).Order("createtime desc").Limit(6).Find(&test).Error
 	}
 	return test
 }

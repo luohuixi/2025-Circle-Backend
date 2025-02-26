@@ -1,10 +1,29 @@
 package dao
 
 import (
-	"circle/models"
 	"circle/database"
+	"circle/models"
+	"circle/request"
+
 	"gorm.io/gorm"
 )
+type UserDaoInterface interface {
+    GetUserByEmail(email string) (*models.User, error)
+	GetUserByName(name string) (*models.User, error)
+    GetUserByID(id int) (*models.User, error)
+	CountUsersByEmail(email string) (int64, error)
+	CountUsers() (int64, error)
+	CountUsersByName(name string) (int64, error)
+	CreateUser(user *models.User) error
+	UpdateUser(user *models.User) error 
+	GetIdByUser(name string) (int, error)
+	CreateUserpractice(userpractice *models.UserPractice) error
+	GetTestByUserid(userid int) ([]models.Test, error)
+	GetPracticeByUserid(userid int) ([]models.Practice, error)
+	GetHistoryTestByUserid(userid int) ([]models.Testhistory, error)
+	GetHistoryPracticeByUserid(userid int) ([]models.Practicehistory, error) 
+	GetAllPracticeByUserid(userid int) (request.Result) 
+}
 type UserDao struct {
 	db *gorm.DB
 }
@@ -36,9 +55,15 @@ func (ud *UserDao) CountUsersByEmail(email string) (int64, error) {
 	return count, err
 }
 
+func (ud *UserDao) CountUsers() (int64, error) {
+	var count int64
+	err := database.DB.Model(&models.User{}).Count(&count).Error
+	return count, err
+}
+
 func (ud *UserDao) CountUsersByName(name string) (int64, error) {
 	var count int64
-	err := database.DB.Model(&models.User{}).Where("name = ?", name).Count(&count).Error
+	err := database.DB.Model(&models.User{}).Where("name = ?",name).Count(&count).Error
 	return count, err
 }
 
@@ -82,4 +107,13 @@ func (ud *UserDao) GetHistoryPracticeByUserid(userid int) ([]models.Practicehist
 	var historypractice []models.Practicehistory
 	err := database.DB.Where("userid = ?", userid).Find(&historypractice).Error
 	return historypractice, err
+}
+
+func (ud *UserDao) GetAllPracticeByUserid(userid int) (request.Result) {
+	var result request.Result
+	database.DB.Model(&models.UserPractice{}).
+	Select("SUM(Practicenum) AS Allpracticenum,SUM(Correctnum) AS Allcorrectnum").
+	Where("userid=?",userid).
+    Scan(&result)
+	return result
 }

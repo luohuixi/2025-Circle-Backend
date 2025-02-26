@@ -9,6 +9,7 @@ type User struct {
 	Password string `json:"password"`
 }
 type Newpassword struct {
+	Email string `json:"email"`
 	Newpassword string `json:"newpassword"`
 }
 type Newusername struct {
@@ -22,4 +23,8 @@ type Discription struct {
 }
 type Userid struct {
 	Userid int `json:"id"`
+}
+type Result struct {
+	Allpracticenum int
+	Allcorrectnum int
 }

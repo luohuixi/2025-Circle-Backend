@@ -9,15 +9,15 @@ import (
 	"math/rand"
 	"fmt"
 	"sync"
-	"io/ioutil"
-	"encoding/json"
+	//"io/ioutil"
+	//"encoding/json"
 
 	"github.com/jordan-wright/email"
 )
 type UserServices struct {
-	ud *dao.UserDao
+	ud dao.UserDaoInterface
 }
-func NewUserServices(ud *dao.UserDao) *UserServices {
+func NewUserServices(ud dao.UserDaoInterface) *UserServices {
 	return &UserServices{
 		ud: ud,
 	}
@@ -28,10 +28,11 @@ type Config struct {
 	Email string `json:"email"`
 }
 func Getemail(ee string,VerificationCode string)  {
-	data, _ := ioutil.ReadFile("data2.json")
-	var config Config
-	_ = json.Unmarshal(data, &config)
-	m:=config.Email
+	// data, _ := ioutil.ReadFile("data2.json")
+	// var config Config
+	// _ = json.Unmarshal(data, &config)
+	// m:=config.Email
+	m:="cmuusgyezivbeccj"
 	html := "<h1>验证码：" + VerificationCode + "</h1>"
 	e := email.NewEmail()
 	e.From = "luohuixi <2388287244@qq.com>"    
@@ -69,7 +70,7 @@ func (us *UserServices) Register(user request.User) (string,bool) {
     if count > 0 {
         return "该邮箱已注册", false
     }
-    totalUsers, err := us.ud.CountUsersByName("")
+    totalUsers, err := us.ud.CountUsers()
     if err != nil {
         return "查询数据库失败", false
     }
@@ -104,8 +105,11 @@ func (us *UserServices) Login(user request.User) (string,bool) {
 // 	defer lock.Unlock()
 // 	delete(WhitelistedTokens,token)
 // }
-func (us *UserServices) Changepassword(newpassword request.Newpassword,name string) (string,bool) {
-	user, _ := us.ud.GetUserByName(name)
+func (us *UserServices) Changepassword(newpassword request.Newpassword) (string,bool) {
+	user, err := us.ud.GetUserByEmail(newpassword.Email)
+	if err != nil {
+		return "该邮箱还没有注册", false
+	}
 	user.Password=newpassword.Newpassword
 	_=us.ud.UpdateUser(user)
 	return "密码修改成功", true
@@ -184,4 +188,13 @@ func (us *UserServices) MyDoPractice(name string) ([]models.Practicehistory) {
 func (us *UserServices) MyUser(name string) (models.User) {
 	user, _ := us.ud.GetUserByName(name)
 	return *user
+}
+func (us *UserServices) AllUserPractice(name string) (request.Result) {
+	userid, _ := us.ud.GetIdByUser(name)
+	result:=us.ud.GetAllPracticeByUserid(userid)
+	return result
+}
+func (us *UserServices) Getuserphoto(id request.Userid) string {
+	user, _ := us.ud.GetUserByID(id.Userid)
+	return user.Imageurl
 }

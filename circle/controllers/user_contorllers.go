@@ -72,9 +72,7 @@ func (uc *UserControllers) Changepassowrd(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "无效的参数"})
 		return
 	}
-	name,_:=c.Get("username")
-	n,_:=name.(string)
-	message,ok:=uc.us.Changepassword(newpassword,n)
+	message,ok:=uc.us.Changepassword(newpassword)
 	if !ok {
 		c.JSON(400, gin.H{"error": message})
 		return
@@ -168,4 +166,19 @@ func (uc *UserControllers) MyUser(c *gin.Context){
 	n,_:=name.(string)
 	user:=uc.us.MyUser(n)
 	c.JSON(200, gin.H{"success": user})
+}
+func (uc *UserControllers) AllUserPractice(c *gin.Context){
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	practice:=uc.us.AllUserPractice(n)
+	c.JSON(200, gin.H{"success": practice})
+}
+func (us *UserControllers) Getuserphoto(c *gin.Context){
+	var id request.Userid
+	if err := c.ShouldBindJSON(&id); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	imageurl:=us.us.Getuserphoto(id)
+	c.JSON(200, gin.H{"success": imageurl})
 }

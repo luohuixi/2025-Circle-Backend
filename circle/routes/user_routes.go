@@ -27,5 +27,7 @@ func RunUser(db *gorm.DB,r *gin.Engine){
 		user.GET("/mydotest", uc.MyDoTest)
 		user.GET("/mydopractice", uc.MyDoPractice)
 		user.GET("/myuser", uc.MyUser)
+		user.GET("/alluserpractice", uc.AllUserPractice)
+		user.POST("/getuserphoto", uc.Getuserphoto)
 	}
 }

@@ -5,6 +5,7 @@ type Test struct{
 	Discription string `json:"discription"`
 	Circle string `json:"circle"`
 	Testname string `json:"testname"`
+	Imageurl string `json:"imageurl"`
 }
 type TestQuestion struct{
 	Testid int `json:"testid"`

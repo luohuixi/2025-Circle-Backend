@@ -58,9 +58,12 @@ func (us *TestServices) Createtestoption(get request.Option) int {
 }
 func (us *TestServices) Gettest(name string,get request.Gettest) models.Test {
 	test, _ := us.ud.GetTestByID(get.Testid)
+	return test
+}
+func (us *TestServices) RecordTestHistory(name string,get request.Gettest) string{
 	id,_:=us.ud.GetIdByUser(name)
 	_=us.ud.RecordTestHistory(get.Testid, id)
-	return test
+	return "成功"
 }
 func (us *TestServices) Getquestion(get request.Gettest) []models.TestQuestion {
 	questions, _:= us.ud.GetQuestionsByTestID(get.Testid)

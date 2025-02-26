@@ -75,6 +75,17 @@ func (uc *TestControllers) Gettest(c *gin.Context) {
 	test:= uc.us.Gettest(n, get)
 	c.JSON(200, gin.H{"test": test})
 }
+func (uc *TestControllers) RecordTestHistory(c *gin.Context) {
+	var get request.Gettest
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:= uc.us.RecordTestHistory(n, get)
+	c.JSON(200, gin.H{"success": message})
+}
 func (uc *TestControllers) Getquestion(c *gin.Context) {
 	var get request.Gettest
 	if err := c.ShouldBindJSON(&get); err != nil {

@@ -8,7 +8,7 @@
 
 POST
 
-Body：表单
+Body：JSON
 
 | email | 对应邮箱 |
 | ----- | -------- |
@@ -25,7 +25,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | email | 对应邮箱 |
 | ----- | -------- |
@@ -41,7 +41,7 @@ Response：JSON
 
 ```json
 {
-    "fail":"验证码错误"
+    "error":"验证码错误"
 }
 ```
 
@@ -49,7 +49,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | email    | 对应邮箱 |
 | -------- | -------- |
@@ -65,7 +65,7 @@ Response：JSON
 
 ```json
 {
-    "fail":"该邮箱已注册"
+    "error":"该邮箱已注册"
 }
 ```
 
@@ -73,7 +73,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | email    | 对应邮箱 |
 | -------- | -------- |
@@ -89,13 +89,13 @@ Response：JSON
 
 ```json
 {
-    "fail":"该邮箱未注册"
+    "error":"该邮箱未注册"
 }
 ```
 
 ```json
 {
-    "fail":"密码错误"
+    "error":"密码错误"
 }
 ```
 
@@ -111,20 +111,15 @@ Response：JSON
 }
 ```
 
-```json
-{
-    "fail":"token无效"
-}
-```
-
 ### 改密码 /changepassword （先验证码验证再这一步）
 
 POST
 
-Body：表单 
+Body：JSON
 
-| newpassword | 新密码 |
+| email       | 邮箱   |
 | ----------- | ------ |
+| newpassword | 新密码 |
 
 Response：JSON
 
@@ -134,17 +129,11 @@ Response：JSON
 }
 ```
 
-```json
-{
-    "fail":"token无效"
-}
-```
-
 ### 改名 /changeusername
 
 POST
 
-Body：表单
+Body：JSON
 
 | newusername | 新用户名 |
 | ----------- | -------- |
@@ -159,13 +148,7 @@ Response：JSON
 
 ```json
 {
-    "fail":"token无效"
-}
-```
-
-```json
-{
-    "fail":"用户名已存在"
+    "error":"用户名已存在"
 }
 ```
 
@@ -173,7 +156,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | imageurl | 图片地址 |
 | -------- | -------- |
@@ -186,17 +169,11 @@ Response：JSON
 }
 ```
 
-```json
-{
-    "fail":"token无效"
-}
-```
-
 ### 设置简介 /setdiscription
 
 POST
 
-Body：表单
+Body：JSON
 
 | discription | 简介 |
 | ----------- | ---- |
@@ -215,7 +192,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | id   | 用户id |
 | ---- | ------ |
@@ -236,19 +213,21 @@ Response：JSON
 
 ```json
 {
-    "tests":{
-        testid:卷子id
-        userid:出题的用户id
-        discription:卷子简介
-        circle:所属圈子
-        good:点赞数
-        status:是否过审（之前说需要，后来又不需要，不用管）
-        createtime:出卷时间
-        testname:卷子名称
-    }
-    {
-        ......
-    }
+    "success": [
+        {
+            "Testid": 1,
+            "Testname": "测试题一",
+            "Userid": 1,  //创卷人
+            "Discription": "测试卷子",
+            "Circle": "测试圈子",
+            "Good": 3,  //点赞数
+            "Status": "approved", //没用已经舍去
+            "Createtime": "2025-01-31T15:33:05.715+08:00"
+        },
+        {
+           ...
+        }
+    ]
 }
 ```
 
@@ -260,14 +239,16 @@ Response：JSON
 
 ```json
 {
-    "tests":{
-        testid:卷子id （可以通过下面的功能——用卷子id获取卷子信息）
-        userid:做题的用户id
-        testhistoryid:没用
-    }
-    {
-        ......
-    }
+    "success": [
+        {
+            "Testhisrotyid": 1, //应该没用
+            "Userid": 1,  
+            "Testid": 1
+        },
+        {
+            ...
+        }
+    ]
 }
 ```
 
@@ -279,22 +260,24 @@ Response：JSON
 
 ```json
 {
-    "practices":{
-        practiceid:练习id
-        content:题目
-        difficult:难度
-        circle:所属圈子
-        userid:出题人id
-        answer:答案
-        variety:题目类型
-        imageurl:图片地址（如果有的话）
-        status:是否过审（之前说需要，后来又不需要，不用管）
-        explain:解析
-        good:点赞数
-    }
-    {
-        ......
-    }
+    "success": [
+        {
+            "Practiceid": 1, 
+            "Content": "这道题选A", //题目内容
+            "Difficulty": "5",
+            "Circle": "测试圈子",  
+            "Userid": 1,
+            "Answer": "A",  //答案
+            "Variety": "单选",
+            "Imageurl": "XXX",
+            "Status": "approved",  //没用已经舍去
+            "Explain": "解释个求",  //题目解析
+            "Good": 2
+        },
+        {
+            ...
+        }
+    ]
 }
 ```
 
@@ -306,14 +289,16 @@ Response：JSON
 
 ```json
 {
-    "practice":{
-        practiceid:卷子id （可以通过下面的功能——用练习id获取练习信息）
-        userid:做题的用户id
-        answer:用户是否答对还是答错（true/false）
-    }
-    {
-        ......
-    }
+    "success": [
+        {
+            "Userid": 1,
+            "Practiceid": 1,
+            "Answer": "true" //用户答题情况，做错了还是对了
+        },
+        {
+            ...
+        }
+    ]
 }
 ```
 
@@ -325,16 +310,33 @@ Response：JSON
 
 ```json
 {
-    "user":{
-        id:用户id
-        name:用户名
-        discription:简介
-        imageurl:头像地址
-        password:大概没用
-        email:大概没用
+    "success": {
+        "Id": 1,
+        "Name": "luohuixinb",
+        "Password": "114514",
+        "Email": "2388287244@qq.com",
+        "Imageurl": "666",
+        "Discription": "测试一下"
     }
 }
 ```
+
+### 用户总题数 /alluserpractice
+
+GET
+
+Response：JSON
+
+```json
+{
+    "success": {
+        "Allpracticenum": 8,
+        "Allcorrectnum": 6
+    }
+}
+```
+
+
 
 # 练习 /practice/…
 
@@ -342,7 +344,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | variety    | 单选题/多选题/判断题         |
 | ---------- | ---------------------------- |
@@ -357,8 +359,8 @@ Response：JSON
 
 ```json
 {
-    "id":练习题的id，后面创建选项用
-	"success":"等待审核",（现在没用）
+    "practiceid": ,
+	"success":"等待审核" //没用
 }
 ```
 
@@ -366,7 +368,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | practiceid | 对应练习的id       |
 | ---------- | ------------------ |
@@ -377,7 +379,7 @@ Response：JSON
 
 ```json
 {
-	"success":"等待审核",（现在没用了）
+    "message": "等待审核" //没用
 }
 ```
 
@@ -385,7 +387,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | circle     | 所属圈子（做练习时用）                 |
 | ---------- | -------------------------------------- |
@@ -394,18 +396,20 @@ Body：表单
 Response：JSON
 
 ```json
-{
-    practiceid:练习id
-    content:题目内容
-    difficulty:难度
-    circle:所属圈子
-    userid:编题用户的id
-    answer:正确答案
-    variety:题目类型
-    imageurl:图片地址
-    status:是否过审（目前不需要）
-    explain:解析
-    good:点赞数
+{  
+    "practice": {
+        "Practiceid": 3,
+        "Content": "aaa",
+        "Difficulty": "1",
+        "Circle": "测试圈子",
+        "Userid": 1,
+        "Answer": "C",
+        "Variety": "单选",
+        "Imageurl": "",
+        "Status": "approved",
+        "Explain": "",
+        "Good": 0
+    }
 }
 ```
 
@@ -413,7 +417,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | practiceid | 练习id |
 | ---------- | ------ |
@@ -422,10 +426,20 @@ Response：JSON
 
 ```json
 {
-    optionid:选项id
-    content:选项内容
-    practiceid:练习id
-    option:选项（A/B/true..）
+    "option": [
+        {
+            "Optionid": 5,
+            "Content": "尖", //选项内容
+            "Practiceid": 4,
+            "Option": "true" //选项，也可以是ABCD
+        },
+        {
+            "Optionid": 6,
+            "Content": "不尖",
+            "Practiceid": 4,
+            "Option": "false"
+        }
+    ]
 }
 ```
 
@@ -433,7 +447,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | practiceid | 练习id   |
 | ---------- | -------- |
@@ -443,7 +457,7 @@ Response：JSON
 
 ```json
 {
-    ”success":评论成功
+    "message": "评论成功"
 }
 ```
 
@@ -451,7 +465,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | practiceid | 练习id |
 | ---------- | ------ |
@@ -460,10 +474,17 @@ Response：JSON
 
 ```json
 {
-    commentid:评论id
-    content:评论内容
-    practiceid:对应的练习id
-    userid:评论人的id
+    "comment": [
+        {
+            "Commentid": 1, //应该没用
+            "Content": "测试评论", 
+            "Practiceid": 1, 
+            "Userid": 1 //发评论的人
+        },
+        {
+            ...
+        }
+    ]
 }
 ```
 
@@ -471,19 +492,19 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
-| practiceid | 练习id                                |
-| ---------- | ------------------------------------- |
-| circle     | 所属圈子（前面getpractice应该有返回） |
-| answer     | 用户是否答对（true/false）            |
-| time       | 用时（以秒返回）                      |
+| practiceid  | 练习id                                |
+| ----------- | ------------------------------------- |
+| circle      | 所属圈子（前面getpractice应该有返回） |
+| answer      | 用户是否答对（true/false）            |
+| time（int） | 用时（以秒返回）                      |
 
 Response：JSON
 
 ```json
 {
-    "success":成功
+    "message": "成功"
 }
 ```
 
@@ -491,7 +512,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | circle | 圈子 |
 | ------ | ---- |
@@ -500,7 +521,7 @@ Response：JSON
 
 ```json
 {
-    "success":用户在这个圈子的练习排名
+    "message": "1"  //排名
 }
 ```
 
@@ -508,7 +529,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | circle | 圈子 |
 | ------ | ---- |
@@ -517,12 +538,14 @@ Response：JSON
 
 ```json
 {
-    id:没用
-    userid:用户的id
-    practicenum:总做练习数
-    correctnum:正确数（正确率自己算）
-    Alltime:总时长（平均时长自己算）
-    circle:对应圈子
+    "userpractice": {
+        "Id": 1,  //应该是没用的
+        "Userid": 1,
+        "Practicenum": 4,
+        "Correctnum": 4,
+        "Alltime": 220,
+        "Circle": "测试圈子"
+    }  //正确率自己算
 }
 ```
 
@@ -530,7 +553,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | practiceid | 练习id |
 | ---------- | ------ |
@@ -539,7 +562,7 @@ Response：JSON
 
 ```json
 {
-    "success":点赞成功
+    "message": "点赞成功"
 }
 ```
 
@@ -551,27 +574,28 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | circle      | 所属圈子 |
 | ----------- | -------- |
 | discription | 简介     |
 | testname    | 卷子名称 |
+| imageurl    | 封面     |
 
 Response：JSON
 
 ```json
 {
-    "id":卷子id
-	"success":"等待审核",（现在没用）
+    "id": 5,  
+    "message": "等待审核"
 }
 ```
 
-### 创建卷子的题目/createtest
+### 创建卷子的题目/createquestion
 
 POST
 
-Body：表单
+Body：JSON
 
 | testid     | 卷子id   |
 | ---------- | -------- |
@@ -586,16 +610,16 @@ Response：JSON
 
 ```json
 {
-    "id":题目id
-	"success":"等待审核",（现在没用）
+    "id": 2,
+    "success": "等待审核"  //没用
 }
 ```
 
-### 创建选项/createoption
+### 创建选项/createtestoption
 
 POST
 
-Body：表单
+Body：JSON
 
 | practiceid | 题目id   |
 | ---------- | -------- |
@@ -606,8 +630,8 @@ Response：JSON
 
 ```json
 {
-    "id":选项id
-	"success":"等待审核",（现在没用）
+    "id": 1,
+    "success": "等待审核"  //大概都没用
 }
 ```
 
@@ -615,7 +639,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | testid | 卷子id(后面会有获取卷子id的方法) |
 | ------ | -------------------------------- |
@@ -624,14 +648,16 @@ Response：JSON
 
 ```json
 {
-    Testid 	
-	Testname 
-	Userid 
-	Discription 
-	Circl
-	Good 
-	Status string
-	Createtime 创建时间
+    "test": {
+        "Testid": 1,
+        "Testname": "测试题一",
+        "Userid": 1,
+        "Discription": "测试卷子",
+        "Circle": "测试圈子",
+        "Good": 3,
+        "Status": "approved",
+        "Createtime": "2025-01-31T15:33:05.715+08:00"
+    }
 }
 ```
 
@@ -639,7 +665,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | testid | 卷子id |
 | ------ | ------ |
@@ -647,15 +673,22 @@ Body：表单
 Response：JSON
 
 ```json
-{   多个。。
-    Testid 
-	Questionid:题目id 	
-	Content 
-	Difficulty 
-	Answer 
-	Variety
-	Imageurl 
-	Explain 
+{
+    "question": [
+        {
+            "Testid": 1,
+            "Questionid": 1,
+            "Content": "测试小",
+            "Difficulty": "",
+            "Answer": "A",
+            "Variety": "单选",
+            "Imageurl": "",
+            "Explain": "解释个但"
+        },
+        {
+            ...
+        }
+    ]
 }
 ```
 
@@ -663,18 +696,32 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
-| practiceid | 题目id   |
-| ---------- | -------- |
-| content    | 选项内容 |
-| option     | 选项     |
+| practiceid | 卷子中某道题的id |
+| ---------- | ---------------- |
 
 Response：JSON
 
 ```json
 {
-    类似
+    "option": [
+        {
+            "Optionid": 1,
+            "Content": "wofule",
+            "Practiceid": 1,
+            "Option": "A"
+        },
+        {
+            "Optionid": 2,
+            "Content": "1111",
+            "Practiceid": 1,
+            "Option": "B"
+        }
+        {
+             ...
+        }
+    ]
 }
 ```
 
@@ -682,18 +729,18 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
-| testid     | 卷子id     |
-| ---------- | ---------- |
-| correctnum | 正确数     |
-| time       | 用时（秒） |
+| testid           | 卷子id     |
+| ---------------- | ---------- |
+| correctnum (int) | 正确数     |
+| time (int)       | 用时（秒） |
 
 Response：JSON
 
 ```json
 {
-    "success":成功
+    "message": "成功"
 }
 ```
 
@@ -701,7 +748,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | testid | 卷子id |
 | ------ | ------ |
@@ -709,12 +756,30 @@ Body：表单
 Response：JSON
 
 ```json
-{   (返回的就是前十，已经排好序)
-    topid:没用
-    userid:用户id
-    correctnum:正确数
-    time:用时
-    testid:卷子id
+{  topid没用，返回的就是排好序的了
+    "top": [
+        {
+            "Topid": 3,  //没用
+            "Userid": 1,
+            "Correctnum": 10,
+            "Time": 10,
+            "Testid": 1
+        },
+        {
+            "Topid": 2,
+            "Userid": 2,
+            "Correctnum": 10,
+            "Time": 50,
+            "Testid": 1
+        },
+        {
+            "Topid": 1,
+            "Userid": 1,
+            "Correctnum": 10,
+            "Time": 100,
+            "Testid": 1
+        }
+    ]
 }
 ```
 
@@ -722,7 +787,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | testid  | 卷子id   |
 | ------- | -------- |
@@ -732,7 +797,7 @@ Response：JSON
 
 ```json
 {
-    ”success":评论成功
+    "message": "成功"
 }
 ```
 
@@ -740,7 +805,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | testid | id   |
 | ------ | ---- |
@@ -749,10 +814,17 @@ Response：JSON
 
 ```json
 {
-    commentid:评论id
-    content:评论内容
-    testid:对应的练习id
-    userid:评论人的id
+    "comment": [
+        {
+            "Commentid": 1,
+            "Content": "wofule",
+            "Testid": 1,
+            "Userid": 1
+        }
+        {
+             ...
+        }
+    ]
 }
 ```
 
@@ -760,7 +832,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | testid | 卷子id |
 | ------ | ------ |
@@ -769,15 +841,15 @@ Response：JSON
 
 ```json
 {
-    "success":点赞成功
+    "message": "点赞成功"
 }
 ```
 
-###  推荐/recommendtest
+###  推荐/recommenttest
 
 POST
 
-Body：表单
+Body：JSON
 
 | circle | 圈子（有两个推荐，一个要circle,如果不用则不需要这个数据） |
 | ------ | --------------------------------------------------------- |
@@ -785,8 +857,22 @@ Body：表单
 Response：JSON
 
 ```json
-{
-    多条test的信息
+{ 最多随机返回10条
+    "test": [
+        {
+            "Testid": 2,
+            "Testname": "测试题二",
+            "Userid": 1,
+            "Discription": "测试卷子2",
+            "Circle": "不是测试圈子",
+            "Good": 1,
+            "Status": "approved",
+            "Createtime": "2025-01-31T15:34:49.968+08:00"
+        },
+        {
+            ...
+        }
+    ]
 }
 ```
 
@@ -794,7 +880,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | circle | 圈子（有两个推荐，一个要circle,如果不用则不需要这个数据） |
 | ------ | --------------------------------------------------------- |
@@ -802,8 +888,22 @@ Body：表单
 Response：JSON
 
 ```json
-{
-    多条test的信息
+{ <=10条，点赞数多的先
+    "test": [
+        {
+            "Testid": 1,
+            "Testname": "测试题一",
+            "Userid": 1,
+            "Discription": "测试卷子",
+            "Circle": "测试圈子",
+            "Good": 3,
+            "Status": "approved",
+            "Createtime": "2025-01-31T15:33:05.715+08:00"
+        },
+        {
+            ...
+        }
+    ]
 }
 ```
 
@@ -811,7 +911,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | circle | 圈子（有两个推荐，一个要circle,如果不用则不需要这个数据） |
 | ------ | --------------------------------------------------------- |
@@ -819,9 +919,23 @@ Body：表单
 Response：JSON
 
 ```json
-{
-    多条test的信息
-}
+{  <=10条
+    "test": [
+        {
+            "Testid": 2,
+            "Testname": "测试题二",
+            "Userid": 1,
+            "Discription": "测试卷子2",
+            "Circle": "不是测试圈子",
+            "Good": 1,
+            "Status": "approved",
+            "Createtime": "2025-01-31T15:34:49.968+08:00"
+        },
+        {
+            ...
+        }
+    ]
+
 ```
 
 ###  关注的圈子的卷子/followcircletest
@@ -830,7 +944,7 @@ GET
 
 POST
 
-Body：表单
+Body：JSON
 
 | circle | 圈子（有两个推荐，一个要circle,如果不用则不需要这个数据） |
 | ------ | --------------------------------------------------------- |
@@ -839,7 +953,21 @@ Response：JSON
 
 ```json
 {
-    多条test的信息
+    "test": [
+        {
+            "Testid": 1,
+            "Testname": "测试题一",
+            "Userid": 1,
+            "Discription": "测试卷子",
+            "Circle": "测试圈子",
+            "Good": 3,
+            "Status": "approved",
+            "Createtime": "2025-01-31T15:33:05.715+08:00"
+        }
+        {
+             ...
+        }
+    ]
 }
 ```
 
@@ -849,7 +977,7 @@ Response：JSON
 
 POST
 
-Body：表单
+Body：JSON
 
 | name        | 圈子名称 |
 | ----------- | -------- |
@@ -860,7 +988,7 @@ Response：JSON
 
 ```json
 {
-    "success":等待审核
+    "message": "等待审核"
 }
 ```
 
@@ -872,18 +1000,20 @@ Response：JSON
 
 ```json
 {
-    "fail":权限不足
+    "error":权限不足
 }
 ```
 
 ```json
-{   (一个一个返回)
-    "id":圈子id
-    "name":圈子名称
-    "imageurl":图片
-    "discription":简介
-    "userid":创圈人id
-    "status":pending(待审核)
+{
+    "circle": {
+        "Id": 4,
+        "Name": "拉拉圈子",
+        "Imageurl": "666",
+        "Discription": "sfasfdsf",
+        "Userid": 1,
+        "Status": "pending"
+    }
 }
 ```
 
@@ -891,7 +1021,7 @@ Response：JSON
 
 POST   (需要root账号登录)
 
-Body：表单
+Body：JSON
 
 | circleid | 圈子id                 |
 | -------- | ---------------------- |
@@ -901,13 +1031,13 @@ Response：JSON
 
 ```json
 {
-    "fail":权限不足
+    "error":权限不足
 }
 ```
 
 ```json
-{   
-    "success":审核结束
+{
+    "message": "审核结束"
 }
 ```
 
@@ -915,7 +1045,7 @@ Response：JSON
 
 POST   
 
-Body：表单
+Body：JSON
 
 | circleid | 圈子id |
 | -------- | ------ |
@@ -923,8 +1053,15 @@ Body：表单
 Response：JSON
 
 ```json
-{   
-    圈子信息
+{
+    "circle": {
+        "Id": 1,
+        "Name": "测试圈子",
+        "Imageurl": "",
+        "Discription": "测试专用",
+        "Userid": 1,  //创圈人
+        "Status": "approved"
+    }
 }
 ```
 
@@ -935,8 +1072,26 @@ GET
 Response：JSON
 
 ```json
-{   
-    随机过审的圈子信息，最多十条
+随机过审的圈子信息，最多十条
+{
+    "circle": [
+        {
+            "Id": 1,
+            "Name": "测试圈子",
+            "Imageurl": "",
+            "Discription": "测试专用",
+            "Userid": 1,
+            "Status": "approved"
+        },
+        {
+            "Id": 2,
+            "Name": "不是测试圈子",
+            "Imageurl": "",
+            "Discription": "测试专用",
+            "Userid": 1,
+            "Status": "approved"
+        }
+    ]
 }
 ```
 
@@ -944,7 +1099,7 @@ Response：JSON
 
 POST   
 
-Body：表单
+Body：JSON
 
 | circleid | 圈子id |
 | -------- | ------ |
@@ -952,8 +1107,8 @@ Body：表单
 Response：JSON
 
 ```json
-{   
-   "success":关注成功
+{
+    "message": "关注成功"
 }
 ```
 
@@ -963,7 +1118,7 @@ Response：JSON
 
 POST   
 
-Body：表单
+Body：JSON
 
 | circlekey | 圈子关键词 |
 | --------- | ---------- |
@@ -971,8 +1126,17 @@ Body：表单
 Response：JSON
 
 ```json
-{   
-    圈子信息
+{
+    "circle": [
+        {
+            "Id": 2,
+            "Name": "不是测试圈子",
+            "Imageurl": "",
+            "Discription": "测试专用",
+            "Userid": 1,
+            "Status": "approved"
+        }
+    ]
 }
 ```
 
@@ -980,7 +1144,7 @@ Response：JSON
 
 POST   
 
-Body：表单
+Body：JSON
 
 | testkey | 卷子名称关键词 |
 | ------- | -------------- |
@@ -988,8 +1152,19 @@ Body：表单
 Response：JSON
 
 ```json
-{   
-    卷子信息
+{
+    "test": [
+        {
+            "Testid": 1,
+            "Testname": "测试题一",
+            "Userid": 1,
+            "Discription": "测试卷子",
+            "Circle": "测试圈子",
+            "Good": 3,
+            "Status": "approved",
+            "Createtime": "2025-01-31T15:33:05.715+08:00"
+        }
+    ]
 }
 ```
 
@@ -997,7 +1172,7 @@ Response：JSON
 
 POST   
 
-Body：表单
+Body：JSON
 
 | circle | 对应圈子 |
 | ------ | -------- |
@@ -1005,8 +1180,25 @@ Body：表单
 Response：JSON
 
 ```json
-{   
-    随机练习题目
+{ 最多返回十条
+    "message": [
+        {
+            "Practiceid": 3,
+            "Content": "aaa",
+            "Difficulty": "1",
+            "Circle": "测试圈子",
+            "Userid": 1,
+            "Answer": "C",
+            "Variety": "单选",
+            "Imageurl": "",
+            "Status": "approved",
+            "Explain": "",
+            "Good": 0
+        },
+        {
+            ...
+        }
+    ]
 }
 ```
 
@@ -1017,10 +1209,22 @@ GET
 Response：JSON
 
 ```json
-{   
-    "id":没用
-    "searchkey":搜索过的词
-    "userid":用户id
+{
+    "history": [
+        {
+            "Id": 3,
+            "SearchKey": "不是",
+            "Userid": 1
+        },
+        {
+            "Id": 4,
+            "SearchKey": "测试题",
+            "Userid": 1
+        },
+        {
+            ...
+        }
+    ]
 }
 ```
 
@@ -1031,9 +1235,9 @@ GET
 Response：JSON
 
 ```json
-{   
-    "success":删除成功
+{
+    "message": "删除成功"
 }
 ```
 
-七牛云token：0bNiwJGpdwmvvuVAzLDjM6gnxj9MiwmSagVpIW81:85DTubmQkSKtCyWaL5KoaucrQKU=:eyJkZWFkbGluZSI6MTczODU3NjI0MCwic2NvcGUiOiJtdXhpLW1pbmlwcm9qZWN0In0=
+# 七牛云token：0bNiwJGpdwmvvuVAzLDjM6gnxj9MiwmSagVpIW81:85DTubmQkSKtCyWaL5KoaucrQKU=:eyJkZWFkbGluZSI6MTczODU3NjI0MCwic2NvcGUiOiJtdXhpLW1pbmlwcm9qZWN0In0=

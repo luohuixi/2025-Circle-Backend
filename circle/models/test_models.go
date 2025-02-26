@@ -9,6 +9,7 @@ type Test struct {
 	Good int
 	Status string
 	Createtime time.Time `gorm:"autoCreateTime"`
+	Imageurl string
 }
 type TestQuestion struct {
 	Testid int

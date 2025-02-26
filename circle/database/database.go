@@ -4,9 +4,9 @@ import (
 	"log"
 	"time"
 	"circle/models"
-	"io/ioutil"
-	"encoding/json"
-	"fmt"
+	//"io/ioutil"
+	//"encoding/json"
+	//"fmt"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -22,11 +22,12 @@ func InitDB() {
 	var err error
 
 	// 配置 MySQL 连接字符串
-	data, _ := ioutil.ReadFile("data.json")
-	var config Config
-	_ = json.Unmarshal(data, &config)
-	dsn := config.DatabaseDSN
-	fmt.Println("数据库连接字符串: ", dsn)
+	// data, _ := ioutil.ReadFile("data.json")
+	// var config Config
+	// _ = json.Unmarshal(data, &config)
+	// dsn := config.DatabaseDSN
+	dsn:="root:2388287244@tcp(112.126.68.22:3306)/circle2?parseTime=true&charset=utf8mb4&loc=Local"
+	//fmt.Println("数据库连接字符串: ", dsn)
 
 	// 初始化 GORM 数据库实例
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
