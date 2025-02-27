@@ -56,5 +56,5 @@ jobs:
           context: .  # 构建上下文，即 Dockerfile 所在的目录
           push: true  # 推送镜像到 Docker 镜像仓库
           tags: |
-            luohuixi/Circle-Backend:latest  
-            luohuixi/Circle-Backend:${{ github.sha }}  
+            luohuixi/circle-backend:latest  
+            luohuixi/circle-backend:${{ github.sha }}  
