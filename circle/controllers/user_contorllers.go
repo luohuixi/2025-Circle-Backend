@@ -173,12 +173,16 @@ func (uc *UserControllers) AllUserPractice(c *gin.Context){
 	practice:=uc.us.AllUserPractice(n)
 	c.JSON(200, gin.H{"success": practice})
 }
-func (us *UserControllers) Getuserphoto(c *gin.Context){
+func (uc *UserControllers) Getuserphoto(c *gin.Context){
 	var id request.Userid
 	if err := c.ShouldBindJSON(&id); err != nil {
 		c.JSON(400, gin.H{"error": "无效的参数"})
 		return
 	}
-	imageurl:=us.us.Getuserphoto(id)
+	imageurl:=uc.us.Getuserphoto(id)
 	c.JSON(200, gin.H{"success": imageurl})
+}
+func (uc *UserControllers) UploadPhoto(c *gin.Context) {
+	token:=uc.us.UploadPhoto()
+	c.JSON(200, gin.H{"success": token})
 }

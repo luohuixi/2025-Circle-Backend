@@ -198,3 +198,8 @@ func (us *UserServices) Getuserphoto(id request.Userid) string {
 	user, _ := us.ud.GetUserByID(id.Userid)
 	return user.Imageurl
 }
+func (us *UserServices) UploadPhoto() string {
+	QnyConfig, _ := ReadConfig("muxiconfig.yaml")
+    Uptoken,_:= GetToken(QnyConfig)
+	return Uptoken
+}
