@@ -3,6 +3,7 @@ import (
     "circle/models"
 	"circle/request"
 	"circle/dao"
+	"circle/database"
 
 	"fmt"
 )
@@ -115,9 +116,39 @@ func (us *PracticeServices) GetUserPractice(name string,get request.GetPractice)
 	userpractice, _ := us.ud.GetUserPracticeByUserID(id,get.Circle)
 	return *userpractice
 }
-func (us *PracticeServices) Lovepractice(get request.GetPractice) string {
+func (us *PracticeServices) Lovepractice(name string,get request.GetPractice) string {
+	userID, _:=us.ud.GetIdByUser(name)
+	practiceid:=fmt.Sprintf("%d", get.Practiceid)
+	err := database.Rdb.SAdd("practicelikes:"+practiceid, userID).Err()
+    if err != nil {
+        return "点赞失败"
+    }
 	practice := us.ud.GetPracticeByPracticeID(get.Practiceid)
 	practice.Good++
 	_ = us.ud.UpdatePractice(&practice)
 	return "点赞成功"
+}
+func (us *PracticeServices) Unlovepractice(name string,get request.GetPractice) string {
+	userID, _:=us.ud.GetIdByUser(name)
+	practiceid:=fmt.Sprintf("%d", get.Practiceid)
+	err := database.Rdb.SRem("practicelikes:"+practiceid, userID).Err()
+	if err != nil {
+		return "取消点赞失败"
+	}
+	practice := us.ud.GetPracticeByPracticeID(get.Practiceid)
+	practice.Good--
+	_ = us.ud.UpdatePractice(&practice)
+	return "取消点赞成功"
+}
+func (us *PracticeServices) Showlovepractice(name string,get request.GetPractice) string {
+	userID, _:=us.ud.GetIdByUser(name)
+	practiceid:=fmt.Sprintf("%d", get.Practiceid)
+	count,err := database.Rdb.SAdd("practicelikes:"+practiceid, userID).Result()
+	if err != nil {
+		return "查看是否点赞失败"
+	}
+	if count == 0 {
+		return "已经点过赞"
+	}
+	return "没有点过赞"
 }

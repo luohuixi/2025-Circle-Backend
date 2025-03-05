@@ -1,122 +1,146 @@
 package service
-import (
-	"circle/request"
-	"circle/dao"
-	"circle/models"
 
-	"net/smtp"
-	"time"
-	"math/rand"
+import (
+	"circle/dao"
+	"circle/database"
+	"circle/models"
+	"circle/request"
+
 	"fmt"
-	"sync"
+	"math/rand"
+	"net/smtp"
+
+	//"sync"
+	"time"
+
 	//"io/ioutil"
 	//"encoding/json"
 
 	"github.com/jordan-wright/email"
+	"github.com/spf13/viper"
 )
+
 type UserServices struct {
 	ud dao.UserDaoInterface
 }
+
 func NewUserServices(ud dao.UserDaoInterface) *UserServices {
 	return &UserServices{
 		ud: ud,
 	}
 }
-var lock sync.Mutex
-var m=make(map[string]string)
+
+//var lock sync.Mutex
+//var m = make(map[string]string)
+
 type Config struct {
 	Email string `json:"email"`
 }
-func Getemail(ee string,VerificationCode string)  {
+
+func Getemail(ee string, VerificationCode string) {
 	// data, _ := ioutil.ReadFile("data2.json")
 	// var config Config
 	// _ = json.Unmarshal(data, &config)
 	// m:=config.Email
-	m:="cmuusgyezivbeccj"
+	viper.SetConfigName("data2") // 设置配置文件名 (不带后缀)
+	viper.SetConfigType("json")
+	viper.AddConfigPath(".") // 设置配置文件所在路径
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Printf("读取配置文件失败: %v", err)
+	}
+	m:= viper.GetString("email")
+	//m := "cmuusgyezivbeccj"
 	html := "<h1>验证码：" + VerificationCode + "</h1>"
 	e := email.NewEmail()
-	e.From = "luohuixi <2388287244@qq.com>"    
-	e.To = []string{ee}         
-	e.Subject = "验证码"                            
-	e.Text = []byte("This is a plain text body.") 
-	e.HTML = []byte(html)                    
-	smtpHost := "smtp.qq.com"                                           
-	smtpPort := "587"                                                             
+	e.From = "luohuixi <2388287244@qq.com>"
+	e.To = []string{ee}
+	e.Subject = "验证码"
+	e.Text = []byte("This is a plain text body.")
+	e.HTML = []byte(html)
+	smtpHost := "smtp.qq.com"
+	smtpPort := "587"
 	auth := smtp.PlainAuth("", "2388287244@qq.com", m, smtpHost)
-	e.Send(smtpHost+":"+smtpPort, auth)  
+	e.Send(smtpHost+":"+smtpPort, auth)
 }
 func GenerateVerificationCode() string {
-	rand.Seed(time.Now().UnixNano()) 
-	code := rand.Intn(9000) + 1000   
+	rand.Seed(time.Now().UnixNano())
+	code := rand.Intn(9000) + 1000
 	return fmt.Sprintf("%04d", code)
 }
-func (us *UserServices) Getcode(email request.Email){
+func (us *UserServices) Getcode(email request.Email) {
 	code := GenerateVerificationCode()
-    Getemail(email.Email, code)
-	lock.Lock()
-    defer lock.Unlock()
-    m[email.Email] = code
+	Getemail(email.Email, code)
+	err := database.Rdb.Set(email.Email, code, 5*time.Minute).Err()
+	if err != nil {
+		return
+	}
+	// lock.Lock()
+	// defer lock.Unlock()
+	// m[email.Email] = code
 }
 func (us *UserServices) Checkcode(email request.Email) bool {
-	lock.Lock()
-	defer lock.Unlock()
-	return m[email.Email] == email.Code
+	//lock.Lock()
+	//defer lock.Unlock()
+	//return m[email.Email] == email.Code
+	rightcode := database.Rdb.Get(email.Email).Val()
+	return rightcode == email.Code
 }
-func (us *UserServices) Register(user request.User) (string,bool) {
+func (us *UserServices) Register(user request.User) (string, bool) {
 	count, err := us.ud.CountUsersByEmail(user.Email)
-    if err != nil {
-        return "查询数据库失败", false
-    }
-    if count > 0 {
-        return "该邮箱已注册", false
-    }
-    totalUsers, err := us.ud.CountUsers()
-    if err != nil {
-        return "查询数据库失败", false
-    }
-    name := "Circle_" + fmt.Sprintf("%04d", totalUsers+1)
-    newuser := models.User{
-        Email:    user.Email,
-        Password: user.Password,
-        Name:     name,
+	if err != nil {
+		return "查询数据库失败", false
+	}
+	if count > 0 {
+		return "该邮箱已注册", false
+	}
+	totalUsers, err := us.ud.CountUsers()
+	if err != nil {
+		return "查询数据库失败", false
+	}
+	name := "Circle_" + fmt.Sprintf("%04d", totalUsers+1)
+	newuser := models.User{
+		Email:       user.Email,
+		Password:    user.Password,
+		Name:        name,
 		Discription: "这里空空如也",
-    }
-    if err := us.ud.CreateUser(&newuser); err != nil {
-        return "创建用户失败", false
-    }
+	}
+	if err := us.ud.CreateUser(&newuser); err != nil {
+		return "创建用户失败", false
+	}
 	return "注册成功", true
 }
-func (us *UserServices) Login(user request.User) (string,bool) {
+func (us *UserServices) Login(user request.User) (string, bool) {
 	users, err := us.ud.GetUserByEmail(user.Email)
-    if err != nil {
-        return "该邮箱未注册",false
-    }
-    if users.Password != user.Password {
-        return "密码错误", false
-    }
-    token,err:= GenerateToken(users.Name)
+	if err != nil {
+		return "该邮箱未注册", false
+	}
+	if users.Password != user.Password {
+		return "密码错误", false
+	}
+	token, err := GenerateToken(users.Name)
 	if err != nil {
 		return "生成 Token 失败", false
 	}
 	return token, true
 }
-// func (us *UserServices) Logout(token string) {
-// 	lock.Lock()
-// 	defer lock.Unlock()
-// 	delete(WhitelistedTokens,token)
-// }
-func (us *UserServices) Changepassword(newpassword request.Newpassword) (string,bool) {
+
+//	func (us *UserServices) Logout(token string) {
+//		lock.Lock()
+//		defer lock.Unlock()
+//		delete(WhitelistedTokens,token)
+//	}
+func (us *UserServices) Changepassword(newpassword request.Newpassword) (string, bool) {
 	user, err := us.ud.GetUserByEmail(newpassword.Email)
 	if err != nil {
 		return "该邮箱还没有注册", false
 	}
-	user.Password=newpassword.Newpassword
-	_=us.ud.UpdateUser(user)
+	user.Password = newpassword.Newpassword
+	_ = us.ud.UpdateUser(user)
 	return "密码修改成功", true
 }
-func (us *UserServices) Changeusername(newusername request.Newusername,name string) (string,bool) {
-	count,_:=us.ud.CountUsersByName(newusername.Newusername)
-	if count>0{
+func (us *UserServices) Changeusername(newusername request.Newusername, name string) (string, bool) {
+	count, _ := us.ud.CountUsersByName(newusername.Newusername)
+	if count > 0 {
 		return "用户名已存在", false
 	}
 	user, err := us.ud.GetUserByName(name)
@@ -128,13 +152,13 @@ func (us *UserServices) Changeusername(newusername request.Newusername,name stri
 	if err != nil {
 		return "用户名修改失败", false
 	}
-	newtoken,err:=GenerateToken(newusername.Newusername)
+	newtoken, err := GenerateToken(newusername.Newusername)
 	if err != nil {
 		return "生成 Token 失败", false
 	}
 	return newtoken, true
 }
-func (us *UserServices) Setphoto (name string, imageurl string) (string,bool) {
+func (us *UserServices) Setphoto(name string, imageurl string) (string, bool) {
 	user, err := us.ud.GetUserByName(name)
 	if err != nil {
 		return "用户查询失败", false
@@ -146,7 +170,7 @@ func (us *UserServices) Setphoto (name string, imageurl string) (string,bool) {
 	}
 	return "头像修改成功", true
 }
-func (us *UserServices) Setdiscription (name string, discription string) (string,bool) {
+func (us *UserServices) Setdiscription(name string, discription string) (string, bool) {
 	user, err := us.ud.GetUserByName(name)
 	if err != nil {
 		return "用户查询失败", false
@@ -158,40 +182,40 @@ func (us *UserServices) Setdiscription (name string, discription string) (string
 	}
 	return "简介修改成功", true
 }
-func (us *UserServices) Getname (id request.Userid) (string,bool) {
+func (us *UserServices) Getname(id request.Userid) (string, bool) {
 	user, err := us.ud.GetUserByID(id.Userid)
 	if err != nil {
 		return "用户查询失败", false
 	}
 	return user.Name, true
 }
-func (us *UserServices) Mytest(name string) ([]models.Test) {
+func (us *UserServices) Mytest(name string) []models.Test {
 	userid, _ := us.ud.GetIdByUser(name)
-	test,_:=us.ud.GetTestByUserid(userid)
+	test, _ := us.ud.GetTestByUserid(userid)
 	return test
 }
-func (us *UserServices) Mypractice(name string) ([]models.Practice) {
+func (us *UserServices) Mypractice(name string) []models.Practice {
 	userid, _ := us.ud.GetIdByUser(name)
-	practice,_:=us.ud.GetPracticeByUserid(userid)
+	practice, _ := us.ud.GetPracticeByUserid(userid)
 	return practice
 }
-func (us *UserServices) MyDoTest(name string) ([]models.Testhistory) {
+func (us *UserServices) MyDoTest(name string) []models.Testhistory {
 	userid, _ := us.ud.GetIdByUser(name)
-	test,_:=us.ud.GetHistoryTestByUserid(userid)
+	test, _ := us.ud.GetHistoryTestByUserid(userid)
 	return test
 }
-func (us *UserServices) MyDoPractice(name string) ([]models.Practicehistory) {
+func (us *UserServices) MyDoPractice(name string) []models.Practicehistory {
 	userid, _ := us.ud.GetIdByUser(name)
-	practice,_:=us.ud.GetHistoryPracticeByUserid(userid)
+	practice, _ := us.ud.GetHistoryPracticeByUserid(userid)
 	return practice
 }
-func (us *UserServices) MyUser(name string) (models.User) {
+func (us *UserServices) MyUser(name string) models.User {
 	user, _ := us.ud.GetUserByName(name)
 	return *user
 }
-func (us *UserServices) AllUserPractice(name string) (request.Result) {
+func (us *UserServices) AllUserPractice(name string) request.Result {
 	userid, _ := us.ud.GetIdByUser(name)
-	result:=us.ud.GetAllPracticeByUserid(userid)
+	result := us.ud.GetAllPracticeByUserid(userid)
 	return result
 }
 func (us *UserServices) Getuserphoto(id request.Userid) string {
@@ -200,6 +224,6 @@ func (us *UserServices) Getuserphoto(id request.Userid) string {
 }
 func (us *UserServices) UploadPhoto() string {
 	QnyConfig, _ := ReadConfig("muxiconfig.yaml")
-    Uptoken,_:= GetToken(QnyConfig)
+	Uptoken, _ := GetToken(QnyConfig)
 	return Uptoken
 }

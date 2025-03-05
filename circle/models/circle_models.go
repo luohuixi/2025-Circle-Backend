@@ -3,7 +3,7 @@ type Circle struct {
     Id int `gorm:"primaryKey;autoIncrement"`
 	Name string
 	Imageurl string
-	Discription string
+	Discription string `gorm:"type:text"`
 	Userid int
 	Status string
 }

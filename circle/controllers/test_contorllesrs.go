@@ -150,8 +150,32 @@ func (uc *TestControllers) Lovetest(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "无效的参数"})
 		return
 	}
-	message:= uc.us.Lovetest(get)
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:= uc.us.Lovetest(n,get)
 	c.JSON(200, gin.H{"message": message})
+}
+func (uc *TestControllers) Unlovetest(c *gin.Context) {
+	var get request.Gettest
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:= uc.us.Unlovetest(n,get)
+	c.JSON(200, gin.H{"message": message})
+}
+func (uc *TestControllers) Showlovetest(c *gin.Context) {
+	var get request.Gettest
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	test:= uc.us.Showlovetest(n, get)
+	c.JSON(200, gin.H{"message": test})
 }
 func (uc *TestControllers) RecommentTest(c *gin.Context) {
 	var get request.GetCircle

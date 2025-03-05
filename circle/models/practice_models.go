@@ -1,4 +1,5 @@
 package models
+import "time"
 type Practice struct {
 	Practiceid int `gorm:"primaryKey;autoIncrement"`
 	Content string `gorm:"type:text"`
@@ -23,6 +24,7 @@ type PracticeComment struct {
 	Content string `gorm:"type:text"`
 	Practiceid int
 	Userid int
+	Createtime time.Time `gorm:"autoCreateTime"`
 }
 type Practicehistory struct {
     Userid int

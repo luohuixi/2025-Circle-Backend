@@ -117,6 +117,30 @@ func (uc *PracticeControllers) Lovepractice(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "无效的参数"})
 		return
 	}
-	message:=uc.us.Lovepractice(get)
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:=uc.us.Lovepractice(n,get)
+	c.JSON(200, gin.H{"message":message})
+}
+func (uc *PracticeControllers) Unlovepractice(c *gin.Context) {
+	var get request.GetPractice
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:=uc.us.Unlovepractice(n,get)
+	c.JSON(200, gin.H{"message":message})
+}
+func (uc *PracticeControllers) Showlovepractice(c *gin.Context) {
+	var get request.GetPractice
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:=uc.us.Showlovepractice(n,get)
 	c.JSON(200, gin.H{"message":message})
 }

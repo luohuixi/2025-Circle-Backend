@@ -4,7 +4,7 @@ type Test struct {
     Testid int `gorm:"primaryKey;autoIncrement"`	
 	Testname string
 	Userid int
-	Discription string
+	Discription string `gorm:"type:text"`
 	Circle string
 	Good int
 	Status string
@@ -39,6 +39,7 @@ type TestComment struct {
 	Content string `gorm:"type:text"`
 	Testid int
 	Userid int
+	Createtime time.Time `gorm:"autoCreateTime"`
 }
 type Testhistory struct {
 	Testhisrotyid int `gorm:"primaryKey;autoIncrement"`

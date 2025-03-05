@@ -28,5 +28,7 @@ func RunTest(db *gorm.DB,r *gin.Engine){
 		test.POST("/newtest", uc.NewTest)
 		test.GET("/followcircletest", uc.FollowCircleTest)
 		test.POST("recordtesthistory", uc.RecordTestHistory)
+		test.POST("/unlovetest", uc.Unlovetest)
+		test.POST("/showlovetest", uc.Showlovetest)
 	}
 }

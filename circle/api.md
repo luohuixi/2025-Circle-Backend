@@ -566,6 +566,46 @@ Response：JSON
 }
 ```
 
+###  取消点赞练习/unlovepractice
+
+POST
+
+Body：JSON
+
+| practiceid | 练习id |
+| ---------- | ------ |
+
+Response：JSON
+
+```json
+{
+    "message": "取消点赞成功"
+}
+```
+
+###  确认是否点赞练习/showlovepractice
+
+POST
+
+Body：JSON
+
+| practiceid | 练习id |
+| ---------- | ------ |
+
+Response：JSON
+
+```json
+{
+    "message": "已经点过赞"
+}
+```
+
+```json
+{
+    "message": "没有点过赞"
+}
+```
+
 # 卷子 /test/…
 
 ### (题目好像要归入题库，将题目往创建练习功能再发一次？)（题库选题功能在后面）
@@ -842,6 +882,46 @@ Response：JSON
 ```json
 {
     "message": "点赞成功"
+}
+```
+
+###  取消点赞卷子/unlovetest
+
+POST
+
+Body：JSON
+
+| testid | 卷子id |
+| ------ | ------ |
+
+Response：JSON
+
+```json
+{
+    "message": "取消点赞成功"
+}
+```
+
+###  确认是否点赞卷子/showlovetest
+
+POST
+
+Body：JSON
+
+| testid | 卷子id |
+| ------ | ------ |
+
+Response：JSON
+
+```json
+{
+    "message": "已经点过赞"
+}
+```
+
+```json
+{
+    "message": "没有点过赞"
 }
 ```
 

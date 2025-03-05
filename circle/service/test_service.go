@@ -3,6 +3,9 @@ import(
     "circle/request"
 	"circle/dao"
 	"circle/models"
+	"circle/database"
+
+	"fmt"
 )
 type TestServices struct {
 	ud *dao.TestDao
@@ -102,11 +105,38 @@ func (us *TestServices) Gettestcomment(get request.Gettest)  []models.TestCommen
 	comments, _:= us.ud.GetTestComments(get.Testid)
 	return comments
 }
-func (us *TestServices) Lovetest(get request.Gettest) string {
+func (us *TestServices) Lovetest(name string,get request.Gettest) string {
+    userID,_:=us.ud.GetIdByUser(name)
+	testid:=fmt.Sprintf("%d",get.Testid)
+	err := database.Rdb.SAdd("testlikes:"+testid, userID).Err()
+    if err != nil {
+        return "点赞失败"
+    }
 	test,_:= us.ud.GetTestByTestID(get.Testid)
 	test.Good++
 	_ = us.ud.UpdateTest(&test)
 	return "点赞成功"
+}
+func (us *TestServices) Unlovetest(name string,get request.Gettest) string {
+	userID,_:=us.ud.GetIdByUser(name)
+	testid:=fmt.Sprintf("%d",get.Testid)
+	err := database.Rdb.SRem("testlikes:"+testid, userID).Err()
+	if err != nil {
+		return "取消点赞失败"
+	}
+	test,_:= us.ud.GetTestByTestID(get.Testid)
+	test.Good--
+	_ = us.ud.UpdateTest(&test)
+	return "取消点赞成功"
+}
+func (us *TestServices) Showlovetest(name string,get request.Gettest) string{
+	userID,_:=us.ud.GetIdByUser(name)
+	testid:=fmt.Sprintf("%d",get.Testid)
+	count, _ := database.Rdb.SAdd("testlikes:"+testid, userID).Result()
+	if count == 0 {
+		return "已经点过赞"
+	}
+	return "没有点过赞"
 }
 func (us *TestServices) RecommentTest(get request.GetCircle) []models.Test{
 	test:=us.ud.RecommentTest(get.Circle)
