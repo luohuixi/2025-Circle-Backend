@@ -44,7 +44,7 @@ func Getemail(ee string, VerificationCode string) {
 	// m:=config.Email
 	viper.SetConfigName("data2") // 设置配置文件名 (不带后缀)
 	viper.SetConfigType("json")
-	viper.AddConfigPath(".") // 设置配置文件所在路径
+	viper.AddConfigPath("./configs") // 设置配置文件所在路径
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("读取配置文件失败: %v", err)
 	}

@@ -125,6 +125,12 @@ Response：JSON
 
 ```json
 {
+    "error": "该邮箱还没有注册"
+}
+```
+
+```json
+{
     "success":"密码修改成功"
 }
 ```
@@ -336,7 +342,34 @@ Response：JSON
 }
 ```
 
+### 获取其他用户头像/getuserphoto
 
+POST
+
+Body：JSON
+
+| id   | 用户id |
+| ---- | ------ |
+
+Response：JSON
+
+```json
+{
+    "success": "666"  
+}
+```
+
+### 七牛云token /uploadphoto
+
+GET
+
+Response：JSON
+
+```json
+{
+    "success": "0bNiwJGpdwmvvuVAzLDjM6gnxj9MiwmSagVpIW81:28167_E48qawKxFKJLD8MCf1aMI=:eyJkZWFkbGluZSI6MTc0MTQxNjQwMCwic2NvcGUiOiJtdXhpLW1pbmlwcm9qZWN0In0="
+}
+```
 
 # 练习 /practice/…
 
@@ -698,6 +731,23 @@ Response：JSON
         "Status": "approved",
         "Createtime": "2025-01-31T15:33:05.715+08:00"
     }
+}
+```
+
+### 记录卷子/recordtesthistory
+
+POST
+
+Body：JSON
+
+| testid | 卷子id(后面会有获取卷子id的方法) |
+| ------ | -------------------------------- |
+
+Response：JSON
+
+```json
+{
+    "success": "成功"
 }
 ```
 

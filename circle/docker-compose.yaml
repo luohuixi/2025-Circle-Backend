@@ -1,10 +1,9 @@
-version: '3'
 services:
-  circleapp:
-    image: circleapp:latest
+  circle-backend:
+    image: circle-backend:latest
     ports:
       - "8080:8080"
     volumes:
-      - ./configs:/circle-backend/config
+      - ./configs:/circle-backend/configs
     environment:
       - TZ=Asia/Shanghai

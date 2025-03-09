@@ -54,7 +54,7 @@ func ParseToken(tokenString string) (*jwt.MapClaims, error) {
 func JwtMiddleware() gin.HandlerFunc {
     return func(c *gin.Context) {
 		//将不需要验证token的接口排除在外
-		skipRoutes := []string{"/user/register", "/user/login","/user/getcode","/user/checkcode"}
+		skipRoutes := []string{"/user/register", "/user/login","/user/getcode","/user/checkcode","/user/changepassword"}
         for _, route := range skipRoutes {
             if c.Request.URL.Path == route {
                 // 如果是不需要验证的路由，直接继续处理请求

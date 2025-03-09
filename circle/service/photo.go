@@ -24,7 +24,7 @@ type QiNiuYunConfig struct {
 func ReadConfig(filename string) (*QiNiuYunConfig, error) {
     viper.SetConfigName("muxiconfig")
     viper.SetConfigType("yaml")
-    viper.AddConfigPath(".") // 设置配置文件所在路径
+    viper.AddConfigPath("./configs") // 设置配置文件所在路径
     if err := viper.ReadInConfig(); err != nil {
         return nil, err
     }
