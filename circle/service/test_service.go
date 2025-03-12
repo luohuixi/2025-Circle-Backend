@@ -132,8 +132,8 @@ func (us *TestServices) Unlovetest(name string,get request.Gettest) string {
 func (us *TestServices) Showlovetest(name string,get request.Gettest) string{
 	userID,_:=us.ud.GetIdByUser(name)
 	testid:=fmt.Sprintf("%d",get.Testid)
-	count, _ := database.Rdb.SAdd("testlikes:"+testid, userID).Result()
-	if count == 0 {
+	count, _ := database.Rdb.SIsMember("testlikes:"+testid, userID).Result()
+	if count {
 		return "已经点过赞"
 	}
 	return "没有点过赞"
@@ -143,11 +143,11 @@ func (us *TestServices) RecommentTest(get request.GetCircle) []models.Test{
 	return test
 }
 func (us *TestServices) HotTest(get request.GetCircle) []models.Test{
-	test:=us.ud.HotTest(get.Circle)
+	test:=us.ud.HotTest(get.Circle,get.Page)
 	return test
 }
 func (us *TestServices) NewTest(get request.GetCircle) []models.Test{
-	test:=us.ud.NewTest(get.Circle)
+	test:=us.ud.NewTest(get.Circle,get.Page)
 	return test
 }
 func (us *TestServices) FollowCircleTest(name string) []models.Test{

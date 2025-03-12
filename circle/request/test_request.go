@@ -30,4 +30,5 @@ type Commenttest struct{
 }
 type GetCircle struct{
 	Circle string `json:"circle"`
+	Page int `json:"page"`
 }

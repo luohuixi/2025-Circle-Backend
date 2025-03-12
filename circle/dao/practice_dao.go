@@ -139,3 +139,27 @@ func (ud *PracticeDao) GetIdByUser(name string) (int, error) {
 	err := database.DB.Model(&models.User{}).Where("name = ?", name).Select("id").First(&id).Error
 	return id, err
 }
+func (ud *PracticeDao) CreatePracticeSituation(practiceid int) error {
+	practicesituation:= models.PracticeSituation{
+		Practiceid: practiceid,
+		Peoplenum: 0,
+		Correctnum: 0,
+	}
+	err := database.DB.Create(&practicesituation).Error
+	if err != nil {
+		return fmt.Errorf("创建失败: %w", err)
+	}
+	return nil
+}
+func (ud *PracticeDao) GetPracticeSituation(practiceid int) (models.PracticeSituation) {
+	var practicesituation models.PracticeSituation
+	_ = database.DB.Where("practiceid = ?", practiceid).First(&practicesituation)
+	return practicesituation
+}
+func (ud *PracticeDao) UpdatePracticeSituation(practicesituation *models.PracticeSituation,practiceid int) error {
+	err := database.DB.Where("practiceid = ?" ,practiceid).Save(practicesituation).Error
+	if err != nil {
+		return fmt.Errorf("更新练习记录失败: %w", err)
+	}
+	return nil
+}

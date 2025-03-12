@@ -1012,8 +1012,9 @@ POST
 
 Body：JSON
 
-| circle | 圈子（有两个推荐，一个要circle,如果不用则不需要这个数据） |
-| ------ | --------------------------------------------------------- |
+| circle    | 圈子（有两个推荐，一个要circle,如果不用则不需要这个数据） |
+| --------- | --------------------------------------------------------- |
+| page(int) | 请求次数                                                  |
 
 Response：JSON
 
@@ -1043,8 +1044,9 @@ POST
 
 Body：JSON
 
-| circle | 圈子（有两个推荐，一个要circle,如果不用则不需要这个数据） |
-| ------ | --------------------------------------------------------- |
+| circle    | 圈子（有两个推荐，一个要circle,如果不用则不需要这个数据） |
+| --------- | --------------------------------------------------------- |
+| page(int) | 请求次数                                                  |
 
 Response：JSON
 
@@ -1370,4 +1372,28 @@ Response：JSON
 }
 ```
 
-# 七牛云token：0bNiwJGpdwmvvuVAzLDjM6gnxj9MiwmSagVpIW81:85DTubmQkSKtCyWaL5KoaucrQKU=:eyJkZWFkbGluZSI6MTczODU3NjI0MCwic2NvcGUiOiJtdXhpLW1pbmlwcm9qZWN0In0=
+
+
+## 新增
+
+###  /practice/getpracticesituation
+
+POST   
+
+Body：JSON
+
+| practiceid | 练习id |
+| ---------- | ------ |
+
+Response：JSON
+
+```json
+{
+    "message": {
+        "Practiceid": 1,
+        "Peoplenum": 4,
+        "Correctnum": 2
+    }
+}
+```
+

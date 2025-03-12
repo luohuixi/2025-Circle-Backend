@@ -21,11 +21,15 @@ func (ud *SearchDao) SearchTest(testkey string) ([]models.Test) {
 	return test
 }
 func (ud *SearchDao) SearchHistory(searchkey string,userid int)  {
-	searchhistory:=models.SearchHistory{
-		SearchKey:searchkey,
-		Userid:userid,
+	var originalhistory models.SearchHistory
+	err:=database.DB.Where("search_key = ?", searchkey).Where("userid = ?", userid).First(&originalhistory).Error
+	if err == gorm.ErrRecordNotFound {
+	    searchhistory:=models.SearchHistory{
+		    SearchKey:searchkey,
+		    Userid:userid,
+	    }
+		database.DB.Create(&searchhistory)
 	}
-	database.DB.Create(&searchhistory)
 }
 func (ud *SearchDao) ShowSearchHistory(userid int) ([]models.SearchHistory){
 	var searchhistory []models.SearchHistory

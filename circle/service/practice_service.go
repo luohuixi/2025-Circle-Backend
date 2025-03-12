@@ -33,6 +33,7 @@ func (us *PracticeServices) Createpractice(name string,practice request.Practice
 	if err != nil {
 		return -1
 	}
+	_=us.ud.CreatePracticeSituation(practices.Practiceid)
 	return practices.Practiceid
 }
 func (us *PracticeServices) Createoption(option request.Option) string {
@@ -82,6 +83,8 @@ func (us *PracticeServices) CheckAnswer(name string,get request.CheckAnswer) str
 	if err != nil {
 		return "用户不存在"
 	}
+	practicesituation:=us.ud.GetPracticeSituation(get.Practiceid)
+	practicesituation.Peoplenum++
 	userpractice, err := us.ud.GetUserPracticeByUserID(user.Id, get.Circle)
 	if err != nil {
 		return "用户练习记录不存在"
@@ -89,7 +92,12 @@ func (us *PracticeServices) CheckAnswer(name string,get request.CheckAnswer) str
 	userpractice.Alltime += get.Time
 	userpractice.Practicenum++
 	if get.Answer == "true" {
+		practicesituation.Correctnum++
 		userpractice.Correctnum++
+	}
+	err = us.ud.UpdatePracticeSituation(&practicesituation, get.Practiceid)
+	if err != nil {
+		return err.Error()
 	}
 	err = us.ud.UpdateUserPractice(userpractice)
 	if err != nil {
@@ -143,12 +151,16 @@ func (us *PracticeServices) Unlovepractice(name string,get request.GetPractice) 
 func (us *PracticeServices) Showlovepractice(name string,get request.GetPractice) string {
 	userID, _:=us.ud.GetIdByUser(name)
 	practiceid:=fmt.Sprintf("%d", get.Practiceid)
-	count,err := database.Rdb.SAdd("practicelikes:"+practiceid, userID).Result()
+	count,err := database.Rdb.SIsMember("practicelikes:"+practiceid, userID).Result()
 	if err != nil {
 		return "查看是否点赞失败"
 	}
-	if count == 0 {
+	if count  {
 		return "已经点过赞"
 	}
 	return "没有点过赞"
+}
+func (us *PracticeServices) GetPracticeSituation(get request.GetPractice) models.PracticeSituation {
+	practicesituation:= us.ud.GetPracticeSituation(get.Practiceid)
+	return practicesituation
 }

@@ -70,9 +70,22 @@ func (ud *TestDao) GetTestOptionsByPracticeID(practiceid int) ([]models.TestOpti
 	return options, nil
 }
 func (ud *TestDao) SaveTopRecord(top models.Top) error {
-	err := database.DB.Create(&top).Error
-	if err != nil {
-		return fmt.Errorf("保存成绩记录失败: %w", err)
+	var origintop models.Top
+	err:= database.DB.Where("testid = ? and userid = ?", top.Testid, top.Userid).First(&origintop).Error
+	if err == gorm.ErrRecordNotFound {
+	    err := database.DB.Create(&top).Error
+	    if err != nil {
+		    return fmt.Errorf("保存成绩记录失败: %w", err)
+	    }
+		return nil
+	}else if err != nil {
+		return fmt.Errorf("获取成绩记录失败: %w", err)
+	}
+	if err==nil&&origintop.Correctnum < top.Correctnum {
+		err := database.DB.Model(&origintop).Updates(models.Top{Correctnum: top.Correctnum, Time: top.Time}).Error
+		if err != nil {
+			return fmt.Errorf("更新成绩记录失败: %w", err)
+		}
 	}
 	return nil
 }
@@ -114,21 +127,23 @@ func (ud *TestDao) RecommentTest(circle string) ([]models.Test){
 	}
 	return test
 }
-func (ud *TestDao) HotTest(circle string) ([]models.Test){
+func (ud *TestDao) HotTest(circle string,page int) ([]models.Test){
 	var test []models.Test
+	offset := (page-1)*6
 	if circle=="" {
-		_= database.DB.Order("good desc").Limit(6).Find(&test).Error
+		_= database.DB.Order("good desc").Offset(offset).Limit(6).Find(&test).Error
 	}else{
-		_= database.DB.Where("circle = ?", circle).Order("good desc").Limit(6).Find(&test).Error
+		_= database.DB.Where("circle = ?", circle).Order("good desc").Offset(offset).Limit(6).Find(&test).Error
 	}
 	return test
 }
-func (ud *TestDao) NewTest(circle string) ([]models.Test){
+func (ud *TestDao) NewTest(circle string,page int) ([]models.Test){
 	var test []models.Test
+	offset := (page-1)*6
 	if circle=="" {
-		_= database.DB.Order("createtime desc").Limit(6).Find(&test).Error
+		_= database.DB.Order("createtime desc").Offset(offset).Limit(6).Find(&test).Error
 	}else{
-		_= database.DB.Where("circle = ?", circle).Order("createtime desc").Limit(6).Find(&test).Error
+		_= database.DB.Where("circle = ?", circle).Order("createtime desc").Offset(offset).Limit(6).Find(&test).Error
 	}
 	return test
 }
@@ -138,7 +153,7 @@ func (ud *TestDao) FollowCircleTest(userid int) ([]models.Test){
 	var circlename []string
 	_= database.DB.Model(&models.FollowCircle{}).Where("userid = ?", userid).Pluck("circleid", &circleid).Error //pluck表示查询单个数据
 	_= database.DB.Model(&models.Circle{}).Where("id in (?)", circleid).Pluck("name", &circlename).Error
-	_= database.DB.Where("circle in (?)", circlename).Order("RAND()").Limit(10).Find(&test).Error  //in表示查询多个数据
+	_= database.DB.Where("circle in (?)", circlename).Order("RAND()").Limit(6).Find(&test).Error  //in表示查询多个数据
 	return test
 }
 func (ud *TestDao) GetIdByUser(name string) (int, error) {

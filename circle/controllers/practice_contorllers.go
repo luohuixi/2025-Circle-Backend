@@ -144,3 +144,12 @@ func (uc *PracticeControllers) Showlovepractice(c *gin.Context) {
 	message:=uc.us.Showlovepractice(n,get)
 	c.JSON(200, gin.H{"message":message})
 }
+func (uc *PracticeControllers) GetPracticeSituation(c *gin.Context) {
+	var get request.GetPractice
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	message:=uc.us.GetPracticeSituation(get)
+	c.JSON(200, gin.H{"message":message})
+}

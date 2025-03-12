@@ -80,6 +80,7 @@ func InitDB() {
 		&models.Circle{},
 		&models.FollowCircle{},
 		&models.SearchHistory{},
+		&models.PracticeSituation{},
 	); err != nil {
 		log.Fatalf("自动迁移失败: %v", err)
 	}

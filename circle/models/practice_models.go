@@ -39,3 +39,8 @@ type UserPractice struct {
 	Alltime int
 	Circle string
 }
+type PracticeSituation struct {
+	Practiceid int `gorm:"index:idx_practiceid"`
+	Peoplenum int
+	Correctnum int
+}

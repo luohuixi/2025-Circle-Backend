@@ -24,5 +24,6 @@ func RunPractice(db *gorm.DB,r *gin.Engine){
 		practice.POST("/lovepractice", uc.Lovepractice)
 		practice.POST("/unlovepractice", uc.Unlovepractice)
 		practice.POST("/showlovepractice", uc.Showlovepractice)
+		practice.POST("/getpracticesituation", uc.GetPracticeSituation)
 	}
 }
