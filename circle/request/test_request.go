@@ -32,3 +32,6 @@ type GetCircle struct{
 	Circle string `json:"circle"`
 	Page int `json:"page"`
 }
+type Commentid struct{
+	Commentid int `json:"commentid"`
+}

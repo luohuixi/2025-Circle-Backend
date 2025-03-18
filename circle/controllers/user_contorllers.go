@@ -138,27 +138,47 @@ func (uc *UserControllers) Getname(c *gin.Context) {
 	c.JSON(200, gin.H{"success": message})
 }
 func (uc *UserControllers) Mytest(c *gin.Context) {
+	var get request.Number
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
 	name,_:=c.Get("username")
 	n,_:=name.(string)
-	test:=uc.us.Mytest(n)
+	test:=uc.us.Mytest(n, get.Page)
     c.JSON(200, gin.H{"success": test})
 }
 func (uc *UserControllers) Mypractice(c *gin.Context) {
+	var get request.Number
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
 	name,_:=c.Get("username")
 	n,_:=name.(string)
-	practice:=uc.us.Mypractice(n)
+	practice:=uc.us.Mypractice(n, get.Page)
 	c.JSON(200, gin.H{"success": practice})
 }
 func (uc *UserControllers) MyDoTest(c *gin.Context) {
+	var get request.Number
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
 	name,_:=c.Get("username")
 	n,_:=name.(string)
-	test:=uc.us.MyDoTest(n)
+	test:=uc.us.MyDoTest(n, get.Page)
 	c.JSON(200, gin.H{"success": test})
 }
 func (uc *UserControllers) MyDoPractice(c *gin.Context) {
+	var get request.Number
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
 	name,_:=c.Get("username")
 	n,_:=name.(string)
-	practice:=uc.us.MyDoPractice(n)
+	practice:=uc.us.MyDoPractice(n, get.Page)
 	c.JSON(200, gin.H{"success": practice})
 }
 func (uc *UserControllers) MyUser(c *gin.Context){

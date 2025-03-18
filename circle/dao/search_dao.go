@@ -12,7 +12,7 @@ func NewSearchDao(db *gorm.DB) *SearchDao {
 }
 func (ud *SearchDao) SearchCircle(circlekey string) ([]models.Circle) {
 	var circle []models.Circle
-	_ = database.DB.Where("name LIKE ?", "%"+circlekey+"%").Find(&circle).Error
+	_ = database.DB.Where("name LIKE ?", "%"+circlekey+"%").Where("status = ?", "approved").Find(&circle).Error
 	return circle
 }
 func (ud *SearchDao) SearchTest(testkey string) ([]models.Test) {
@@ -33,7 +33,7 @@ func (ud *SearchDao) SearchHistory(searchkey string,userid int)  {
 }
 func (ud *SearchDao) ShowSearchHistory(userid int) ([]models.SearchHistory){
 	var searchhistory []models.SearchHistory
-	_ = database.DB.Where("userid = ?", userid).Find(&searchhistory).Error
+	_ = database.DB.Where("userid = ?", userid).Order("id DESC").Find(&searchhistory).Error
 	return searchhistory
 }
 func (ud *SearchDao) DeleteHistory(id int)  {

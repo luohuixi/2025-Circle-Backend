@@ -69,3 +69,25 @@ func (uc *CircleControllers) FollowCircle(c *gin.Context){
     message:=uc.us.FollowCircle(n,get)
     c.JSON(200,gin.H{"message":message})
 }
+func (uc *CircleControllers) UnFollowCircle(c *gin.Context){
+    var get request.Circleid
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:=uc.us.UnFollowCircle(n,get)
+	c.JSON(200,gin.H{"message":message})
+}
+func (uc *CircleControllers) ShowFollowCircle(c *gin.Context){
+	var get request.Circleid
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:=uc.us.ShowFollowCircle(n,get)
+	c.JSON(200,gin.H{"message":message})
+}

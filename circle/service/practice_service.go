@@ -67,6 +67,7 @@ func (us *PracticeServices) CommentPractice(name string,comment request.Comment)
 		Content:    comment.Content,
 		Practiceid: comment.Practiceid,
 		Userid:       id,
+		Good:	   0,
 	}
 	err := us.ud.CreatePracticeComment(&comments)
 	if err != nil {
@@ -158,9 +159,42 @@ func (us *PracticeServices) Showlovepractice(name string,get request.GetPractice
 	if count  {
 		return "已经点过赞"
 	}
-	return "没有点过赞"
+	return "没有"
 }
 func (us *PracticeServices) GetPracticeSituation(get request.GetPractice) models.PracticeSituation {
 	practicesituation:= us.ud.GetPracticeSituation(get.Practiceid)
 	return practicesituation
+}
+func (us *PracticeServices) Lovepracticecomment(name string,get request.Commentid) string {
+    userID,_:=us.ud.GetIdByUser(name)
+	testid:=fmt.Sprintf("%d",get.Commentid)
+	err := database.Rdb.SAdd("practicecommentlikes:"+testid, userID).Err()
+    if err != nil {
+        return "点赞失败"
+    }
+	test,_:= us.ud.GetPracticeCommentByID(get.Commentid)
+	test.Good++
+	_ = us.ud.UpdatePracticeComment(&test)
+	return "点赞成功"
+}
+func (us *PracticeServices) Unlovepracticecomment(name string,get request.Commentid) string {
+	userID,_:=us.ud.GetIdByUser(name)
+	testid:=fmt.Sprintf("%d",get.Commentid)
+	err := database.Rdb.SRem("practicecommentlikes:"+testid, userID).Err()
+	if err != nil {
+		return "取消点赞失败"
+	}
+	test,_:= us.ud.GetPracticeCommentByID(get.Commentid)
+	test.Good--
+	_ = us.ud.UpdatePracticeComment(&test)
+	return "取消点赞成功"
+}
+func (us *PracticeServices) Showlovepracticecomment(name string,get request.Commentid) string{
+	userID,_:=us.ud.GetIdByUser(name)
+	testid:=fmt.Sprintf("%d",get.Commentid)
+	count, _ := database.Rdb.SIsMember("practicecommentlikes:"+testid, userID).Result()
+	if count {
+		return "已经点过赞"
+	}
+	return "没有点过赞"
 }

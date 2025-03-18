@@ -167,3 +167,11 @@ func (ud *TestDao) GetUserByName(name string) (*models.User, error) {
 	err := database.DB.Where("name = ?", name).First(&user).Error
 	return &user, err
 }
+func (ud *TestDao) GetTestCommentByID(commentid int) (models.TestComment, error) {
+	var comment models.TestComment
+	err := database.DB.Where("commentid = ?", commentid).First(&comment).Error
+	return comment, err
+}
+func (ud *TestDao) UpdateTestComment(comment *models.TestComment) error {
+	return database.DB.Save(comment).Error
+}

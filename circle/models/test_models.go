@@ -40,6 +40,7 @@ type TestComment struct {
 	Testid int
 	Userid int
 	Createtime time.Time `gorm:"autoCreateTime"`
+	Good int
 }
 type Testhistory struct {
 	Testhisrotyid int `gorm:"primaryKey;autoIncrement"`

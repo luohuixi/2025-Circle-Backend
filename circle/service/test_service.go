@@ -97,6 +97,7 @@ func (us *TestServices) Commenttest(name string,get request.Commenttest) string 
 		Content: get.Content,
 		Testid:  get.Testid,
 		Userid:  user.Id,
+		Good:	   0,
 	}
 	_ = us.ud.CreateTestComment(&comment)
 	return "成功"
@@ -154,4 +155,37 @@ func (us *TestServices) FollowCircleTest(name string) []models.Test{
 	userid,_:=us.ud.GetIdByUser(name)
 	test:=us.ud.FollowCircleTest(userid)
 	return test
+}
+func (us *TestServices) Lovetestcomment(name string,get request.Commentid) string {
+    userID,_:=us.ud.GetIdByUser(name)
+	testid:=fmt.Sprintf("%d",get.Commentid)
+	err := database.Rdb.SAdd("testcommentlikes:"+testid, userID).Err()
+    if err != nil {
+        return "点赞失败"
+    }
+	test,_:= us.ud.GetTestCommentByID(get.Commentid)
+	test.Good++
+	_ = us.ud.UpdateTestComment(&test)
+	return "点赞成功"
+}
+func (us *TestServices) Unlovetestcomment(name string,get request.Commentid) string {
+	userID,_:=us.ud.GetIdByUser(name)
+	testid:=fmt.Sprintf("%d",get.Commentid)
+	err := database.Rdb.SRem("testcommentlikes:"+testid, userID).Err()
+	if err != nil {
+		return "取消点赞失败"
+	}
+	test,_:= us.ud.GetTestCommentByID(get.Commentid)
+	test.Good--
+	_ = us.ud.UpdateTestComment(&test)
+	return "取消点赞成功"
+}
+func (us *TestServices) Showlovetestcomment(name string,get request.Commentid) string{
+	userID,_:=us.ud.GetIdByUser(name)
+	testid:=fmt.Sprintf("%d",get.Commentid)
+	count, _ := database.Rdb.SIsMember("testcommentlikes:"+testid, userID).Result()
+	if count {
+		return "已经点过赞"
+	}
+	return "没有点过赞"
 }

@@ -210,3 +210,36 @@ func (uc *TestControllers) FollowCircleTest(c *gin.Context) {
 	test:=uc.us.FollowCircleTest(n)
 	c.JSON(200, gin.H{"test": test})
 }
+func (uc *TestControllers) Lovetestcomment(c *gin.Context) {
+	var get request.Commentid
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:= uc.us.Lovetestcomment(n,get)
+	c.JSON(200, gin.H{"message": message})
+}
+func (uc *TestControllers) Unlovetestcomment(c *gin.Context) {
+	var get request.Commentid
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:= uc.us.Unlovetestcomment(n,get)
+	c.JSON(200, gin.H{"message": message})
+}
+func (uc *TestControllers) Showlovetestcomment(c *gin.Context) {
+	var get request.Commentid
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	test:= uc.us.Showlovetestcomment(n,get)
+	c.JSON(200, gin.H{"message": test})
+}

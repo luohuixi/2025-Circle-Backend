@@ -18,5 +18,7 @@ func RunCircle(db *gorm.DB,r *gin.Engine){
 		circle.GET("/selectcircle",  uc.SelectCircle)
 		circle.GET("/pendingcircle",  uc.PendingCircle)
 		circle.POST("/approvecircle",  uc.ApproveCircle)
+		circle.POST("/unfollowcircle",  uc.UnFollowCircle)
+		circle.POST("/showfollowcircle",  uc.ShowFollowCircle)
 	}
 }

@@ -25,6 +25,7 @@ type PracticeComment struct {
 	Practiceid int
 	Userid int
 	Createtime time.Time `gorm:"autoCreateTime"`
+	Good int
 }
 type Practicehistory struct {
     Userid int

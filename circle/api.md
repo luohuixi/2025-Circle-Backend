@@ -1244,6 +1244,40 @@ Response：JSON
 }
 ```
 
+###  取消关注圈子/unfollowcircle
+
+POST   
+
+Body：JSON
+
+| circleid | 圈子id |
+| -------- | ------ |
+
+Response：JSON
+
+```json
+{
+    "message": "取消关注成功"
+}
+```
+
+###  是否关注圈子/showfollowcircle
+
+POST   
+
+Body：JSON
+
+| circleid | 圈子id |
+| -------- | ------ |
+
+Response：JSON
+
+```json
+{
+    "message": "已关注/未关注"
+}
+```
+
 # 搜索 /search/..
 
 ###  搜索圈子/searchcircle

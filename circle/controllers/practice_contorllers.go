@@ -153,3 +153,36 @@ func (uc *PracticeControllers) GetPracticeSituation(c *gin.Context) {
 	message:=uc.us.GetPracticeSituation(get)
 	c.JSON(200, gin.H{"message":message})
 }
+func (uc *PracticeControllers) Lovepracticecomment(c *gin.Context) {
+	var get request.Commentid
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:= uc.us.Lovepracticecomment(n,get)
+	c.JSON(200, gin.H{"message": message})
+}
+func (uc *PracticeControllers) Unlovepracticecomment(c *gin.Context) {
+	var get request.Commentid
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	message:= uc.us.Unlovepracticecomment(n,get)
+	c.JSON(200, gin.H{"message": message})
+}
+func (uc *PracticeControllers) Showlovepracticecomment(c *gin.Context) {
+	var get request.Commentid
+	if err := c.ShouldBindJSON(&get); err != nil {
+		c.JSON(400, gin.H{"error": "无效的参数"})
+		return
+	}
+	name,_:=c.Get("username")
+	n,_:=name.(string)
+	test:= uc.us.Showlovepracticecomment(n,get)
+	c.JSON(200, gin.H{"message": test})
+}

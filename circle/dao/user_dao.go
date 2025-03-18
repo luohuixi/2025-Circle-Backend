@@ -18,10 +18,10 @@ type UserDaoInterface interface {
 	UpdateUser(user *models.User) error 
 	GetIdByUser(name string) (int, error)
 	CreateUserpractice(userpractice *models.UserPractice) error
-	GetTestByUserid(userid int) ([]models.Test, error)
-	GetPracticeByUserid(userid int) ([]models.Practice, error)
-	GetHistoryTestByUserid(userid int) ([]models.Testhistory, error)
-	GetHistoryPracticeByUserid(userid int) ([]models.Practicehistory, error) 
+	GetTestByUserid(userid int,page int) ([]models.Test, error)
+	GetPracticeByUserid(userid int,page int) ([]models.Practice, error)
+	GetHistoryTestByUserid(userid int,page int) ([]models.Testhistory, error)
+	GetHistoryPracticeByUserid(userid int,page int) ([]models.Practicehistory, error) 
 	GetAllPracticeByUserid(userid int) (request.Result) 
 }
 type UserDao struct {
@@ -85,27 +85,31 @@ func (ud *UserDao) CreateUserpractice(userpractice *models.UserPractice) error {
 	return database.DB.Create(userpractice).Error
 }
 
-func (ud *UserDao) GetTestByUserid(userid int) ([]models.Test, error) {
+func (ud *UserDao) GetTestByUserid(userid int,page int) ([]models.Test, error) {
 	var usertest []models.Test
-	err := database.DB.Where("userid = ?", userid).Find(&usertest).Error
+	offset := (page-1)*4
+	err := database.DB.Where("userid = ?", userid).Offset(offset).Limit(4).Find(&usertest).Error
 	return usertest, err
 }
 
-func (ud *UserDao) GetPracticeByUserid(userid int) ([]models.Practice, error) {
+func (ud *UserDao) GetPracticeByUserid(userid int,page int) ([]models.Practice, error) {
 	var userpractice []models.Practice
-	err := database.DB.Where("userid = ?", userid).Find(&userpractice).Error
+	offset := (page-1)*4
+	err := database.DB.Where("userid = ?", userid).Offset(offset).Limit(4).Find(&userpractice).Error
 	return userpractice, err
 }
 
-func (ud *UserDao) GetHistoryTestByUserid(userid int) ([]models.Testhistory, error) {
+func (ud *UserDao) GetHistoryTestByUserid(userid int,page int) ([]models.Testhistory, error) {
 	var historytest []models.Testhistory
-	err := database.DB.Where("userid = ?", userid).Find(&historytest).Error
+	offset := (page-1)*4
+	err := database.DB.Where("userid = ?", userid).Offset(offset).Limit(4).Find(&historytest).Error
 	return historytest, err
 }
 
-func (ud *UserDao) GetHistoryPracticeByUserid(userid int) ([]models.Practicehistory, error) {
+func (ud *UserDao) GetHistoryPracticeByUserid(userid int,page int) ([]models.Practicehistory, error) {
 	var historypractice []models.Practicehistory
-	err := database.DB.Where("userid = ?", userid).Find(&historypractice).Error
+	offset := (page-1)*4
+	err := database.DB.Where("userid = ?", userid).Offset(offset).Limit(4).Find(&historypractice).Error
 	return historypractice, err
 }
 

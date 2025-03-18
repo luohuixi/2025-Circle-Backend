@@ -1,8 +1,11 @@
 package service
+
 import (
-    "circle/models"
-	"circle/request"
 	"circle/dao"
+	"circle/models"
+	"circle/request"
+
+	"gorm.io/gorm"
 )
 type CircleServices struct {
 	ud *dao.CircleDao
@@ -56,4 +59,17 @@ func (us *CircleServices) FollowCircle(name string,get request.Circleid) string{
     id,_:=us.ud.GetIdByUser(name)
     _=us.ud.FollowCircle(get.Circleid,id)
     return "关注成功"
+}
+func (us *CircleServices) UnFollowCircle(name string,get request.Circleid) string{
+    id,_:=us.ud.GetIdByUser(name)
+    _=us.ud.UnFollowCircle(get.Circleid,id)
+    return "取消关注成功"
+}
+func (us *CircleServices) ShowFollowCircle(name string,get request.Circleid) string{
+    id,_:=us.ud.GetIdByUser(name)
+    err:=us.ud.ShowFollowCircle(get.Circleid,id)
+    if err==gorm.ErrRecordNotFound {
+        return "未关注"
+    }
+    return "已关注"
 }

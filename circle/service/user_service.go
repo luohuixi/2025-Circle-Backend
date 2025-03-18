@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/smtp"
+	"crypto/tls"
 
 	//"sync"
 	"time"
@@ -52,15 +53,18 @@ func Getemail(ee string, VerificationCode string) {
 	//m := "cmuusgyezivbeccj"
 	html := "<h1>验证码：" + VerificationCode + "</h1>"
 	e := email.NewEmail()
-	e.From = "luohuixi <2388287244@qq.com>"
+	e.From = "luohuixi <13380542798@163.com>"
 	e.To = []string{ee}
 	e.Subject = "验证码"
 	e.Text = []byte("This is a plain text body.")
 	e.HTML = []byte(html)
-	smtpHost := "smtp.qq.com"
-	smtpPort := "587"
-	auth := smtp.PlainAuth("", "2388287244@qq.com", m, smtpHost)
-	e.Send(smtpHost+":"+smtpPort, auth)
+	smtpHost := "smtp.163.com"
+	smtpPort := "465"
+	auth := smtp.PlainAuth("", "13380542798@163.com", m, smtpHost)
+	// 强制使用 SSL 连接
+    _= e.SendWithTLS(smtpHost+":"+smtpPort, auth, &tls.Config{
+        ServerName: smtpHost,
+    })
 }
 func GenerateVerificationCode() string {
 	rand.Seed(time.Now().UnixNano())
@@ -189,24 +193,24 @@ func (us *UserServices) Getname(id request.Userid) (string, bool) {
 	}
 	return user.Name, true
 }
-func (us *UserServices) Mytest(name string) []models.Test {
+func (us *UserServices) Mytest(name string,page int) []models.Test {
 	userid, _ := us.ud.GetIdByUser(name)
-	test, _ := us.ud.GetTestByUserid(userid)
+	test, _ := us.ud.GetTestByUserid(userid,page)
 	return test
 }
-func (us *UserServices) Mypractice(name string) []models.Practice {
+func (us *UserServices) Mypractice(name string,page int) []models.Practice {
 	userid, _ := us.ud.GetIdByUser(name)
-	practice, _ := us.ud.GetPracticeByUserid(userid)
+	practice, _ := us.ud.GetPracticeByUserid(userid,page)
 	return practice
 }
-func (us *UserServices) MyDoTest(name string) []models.Testhistory {
+func (us *UserServices) MyDoTest(name string,page int) []models.Testhistory {
 	userid, _ := us.ud.GetIdByUser(name)
-	test, _ := us.ud.GetHistoryTestByUserid(userid)
+	test, _ := us.ud.GetHistoryTestByUserid(userid,page)
 	return test
 }
-func (us *UserServices) MyDoPractice(name string) []models.Practicehistory {
+func (us *UserServices) MyDoPractice(name string,page int) []models.Practicehistory {
 	userid, _ := us.ud.GetIdByUser(name)
-	practice, _ := us.ud.GetHistoryPracticeByUserid(userid)
+	practice, _ := us.ud.GetHistoryPracticeByUserid(userid,page)
 	return practice
 }
 func (us *UserServices) MyUser(name string) models.User {

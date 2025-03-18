@@ -28,3 +28,6 @@ type Result struct {
 	Allpracticenum int
 	Allcorrectnum int
 }
+type Number struct {
+	Page int `json:"page"`
+}

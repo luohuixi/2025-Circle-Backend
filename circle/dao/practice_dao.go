@@ -163,3 +163,11 @@ func (ud *PracticeDao) UpdatePracticeSituation(practicesituation *models.Practic
 	}
 	return nil
 }
+func (ud *PracticeDao) GetPracticeCommentByID(commentid int) (models.PracticeComment, error) {
+	var comment models.PracticeComment
+	err := database.DB.Where("commentid = ?", commentid).First(&comment).Error
+	return comment, err
+}
+func (ud *PracticeDao) UpdatePracticeComment(comment *models.PracticeComment) error {
+	return database.DB.Save(comment).Error
+}

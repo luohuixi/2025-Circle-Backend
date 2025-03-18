@@ -46,3 +46,10 @@ func (ud *CircleDao) GetIdByUser(name string) (int, error) {
 	err := database.DB.Model(&models.User{}).Where("name = ?", name).Select("id").First(&id).Error
 	return id, err
 }
+func (ud *CircleDao) UnFollowCircle(circleid int, userid int) error {
+	return database.DB.Where("circleid=? and userid=?", circleid, userid).Delete(&models.FollowCircle{}).Error
+}
+func (ud *CircleDao) ShowFollowCircle(circleid int, userid int) error {
+	err:=database.DB.Where("circleid=? and userid=?", circleid, userid).First(&models.FollowCircle{}).Error
+	return err
+}
